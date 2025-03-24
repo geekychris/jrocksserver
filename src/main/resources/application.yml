@@ -1,0 +1,32 @@
+rocksdb:
+  data-dir: ./data
+  transactional: false
+  max-open-files: 1000
+  max-background-jobs: 4
+  max-background-compactions: 4
+  max-background-flushes: 2
+  write-buffer-size: 67108864  # 64MB
+  max-write-buffer-number: 4
+  target-file-size: 67108864   # 64MB
+  block-size: 4096  # 4KB
+  compression-enabled: true
+  compression-type: SNAPPY_COMPRESSION
+  bottommost-compression-type: ZSTD_COMPRESSION
+  bloom-filter-bits-per-key: 10
+  cache-size: 8388608  # 8MB
+  write-buffer-sync: true
+  level-zero-file-num-compaction-trigger: 4
+  level-zero-slowdown-writes-trigger: 20
+  level-zero-stop-writes-trigger: 36
+  create-if-missing: true
+  error-if-exists: false
+  paranoid-checks: true
+  sync: false
+  disable-wal: false
+  grpc:
+    port: 9095
+
+logging:
+  level:
+    root: INFO
+    com.example.rocksdb: DEBUG

@@ -1,0 +1,125 @@
+syntax = "proto3";
+
+package com.hitorro.rocksdbserver;
+
+option java_multiple_files = true;
+option java_package = "com.hitorro.rocksdbserver.proto";
+option java_outer_classname = "RocksDBServiceProto";
+
+service RocksDBService {
+  // Basic CRUD operations
+  rpc Get(GetRequest) returns (GetResponse);
+  rpc GetByPrefix(GetByPrefixRequest) returns (stream KeyValue);
+  rpc PutSingle(PutRequest) returns (PutResponse);
+  rpc Put(stream PutRequest) returns (PutResponse);
+  rpc Delete(DeleteRequest) returns (DeleteResponse);
+  rpc BatchPut(stream KeyValue) returns (PutResponse);
+  
+  // Sequence-based operations
+  rpc GetCurrentSequenceNumber(DatabaseRequest) returns (SequenceNumberResponse);
+  rpc GetFromSequence(SequenceRequest) returns (stream KeyValueWithSequence);
+  
+  // Replication operations
+  rpc StartReplication(ReplicationRequest) returns (ReplicationResponse);
+  rpc StreamReplication(ReplicationRequest) returns (stream KeyValueWithSequence);
+}
+
+// Common messages
+message DatabaseRequest {
+  string database_name = 1;
+}
+
+message KeyValue {
+  bytes key = 1;
+  bytes value = 2;
+  string database_name = 3;
+}
+
+message KeyValueWithSequence {
+  bytes key = 1;
+  bytes value = 2;
+  uint64 sequence_number = 3;
+}
+
+// CRUD operation messages
+message GetRequest {
+  string database_name = 1;
+  repeated bytes keys = 2;
+}
+
+message GetResponse {
+  repeated KeyValue key_values = 1;
+  Status status = 2;
+}
+
+message GetByPrefixRequest {
+  string database_name = 1;
+  bytes prefix = 2;
+  int32 limit = 3; // Optional limit to number of results, 0 means no limit
+}
+
+message PutRequest {
+  string database_name = 1;
+  repeated KeyValue key_values = 2;
+}
+
+message PutResponse {
+  int32 success_count = 1;
+  Status status = 2;
+  uint64 new_sequence_number = 3; // The sequence number after this operation
+}
+
+message DeleteRequest {
+  string database_name = 1;
+  repeated bytes keys = 2;
+}
+
+message DeleteResponse {
+  int32 success_count = 1;
+  Status status = 2;
+  uint64 new_sequence_number = 3; // The sequence number after this operation
+}
+
+// Sequence-based operation messages
+message SequenceNumberResponse {
+  uint64 sequence_number = 1;
+  Status status = 2;
+}
+
+message SequenceRequest {
+  string database_name = 1;
+  uint64 start_sequence_number = 2;
+  int32 limit = 3; // Optional limit to number of results, 0 means no limit
+}
+
+// Replication messages
+message ReplicationRequest {
+  string source_host = 1;
+  int32 source_port = 2;
+  string source_database_name = 3;
+  string target_database_name = 4;
+  uint64 start_sequence_number = 5;
+  bool stream_mode = 6; // Whether to use streaming replication
+}
+
+message ReplicationResponse {
+  uint64 source_sequence_number = 1; // Latest sequence number from source
+  uint64 target_sequence_number = 2; // Latest sequence number in target after replication
+  int32 records_processed = 3;
+  Status status = 4;
+}
+
+// Status codes and messages
+message Status {
+  enum Code {
+    OK = 0;
+    ERROR = 1;
+    NOT_FOUND = 2;
+    DATABASE_NOT_FOUND = 3;
+    INVALID_ARGUMENT = 4;
+    REPLICATION_ERROR = 5;
+  }
+  Code code = 1;
+  string message = 2;
+}
+
