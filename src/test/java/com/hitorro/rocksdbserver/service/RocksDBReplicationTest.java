@@ -39,8 +39,8 @@ class RocksDBReplicationTest {
         RocksDBProperties sourceProps = new RocksDBProperties();
         sourceProps.setDataDir(sourceTempDir.toString());
         sourceProps.setCompressionEnabled(true);
-        sourceProps.setCompressionType("kSnappyCompression");
-        sourceProps.setBottommostCompressionType("kZSTD");
+        sourceProps.setCompressionType("SNAPPY_COMPRESSION");
+        sourceProps.setBottommostCompressionType("ZSTD_COMPRESSION");
         sourceConfig = new RocksDBConfiguration(sourceProps);
         sourceConfig.init();
         sourceService = new RocksDBGrpcService(sourceConfig);
@@ -49,8 +49,8 @@ class RocksDBReplicationTest {
         RocksDBProperties targetProps = new RocksDBProperties();
         targetProps.setDataDir(targetTempDir.toString());
         targetProps.setCompressionEnabled(true);
-        targetProps.setCompressionType("kSnappyCompression");
-        targetProps.setBottommostCompressionType("kZSTD");
+        targetProps.setCompressionType("SNAPPY_COMPRESSION");
+        targetProps.setBottommostCompressionType("ZSTD_COMPRESSION");
         targetConfig = new RocksDBConfiguration(targetProps);
         targetConfig.init();
         targetService = new RocksDBGrpcService(targetConfig);
