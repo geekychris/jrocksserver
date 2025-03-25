@@ -35,6 +35,10 @@ cd src/main/docker
 docker build -t rocksdb-service .
 ```
 
+```plantuml
+A -> B: abc
+```
+
 ## Running
 
 ### Local
