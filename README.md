@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/logo.png" alt="Jrocksserver logo" width="180">
+</p>
+
 # RocksDB Service
 
 A gRPC service providing multi-database RocksDB access with streaming and replication capabilities.
